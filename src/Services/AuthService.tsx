@@ -2,13 +2,14 @@ import axios from "axios";
 import {handleError} from "../Helpers/ErrorHandler";
 import {UserProfileToken} from "../Models/User";
 
-const api : string = (process.env["API_URL "] as string);
+const api : string = (process.env["REACT_APP_API_URL"] as string);
 
 export const loginApi =
     async (username: string, password : string) => {
+    console.log(api)
     try {
         const data = await axios.post<UserProfileToken>
-            (api + "account/login", {username, password});
+            (api + "authenticate", {username, password});
         return data;
     } catch (error) {
         handleError(error);
