@@ -28,8 +28,8 @@ export const UserProvider = ({children}: Props) => {
         const token = localStorage.getItem("token");
         if(user && token) {
             setUser(JSON.parse(user));
-            setUser(JSON.parse(token));
-            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            setToken(token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ` + token;
         }
         setIsReady(true);
     }, []);
@@ -43,8 +43,8 @@ export const UserProvider = ({children}: Props) => {
                     username: res?.data.username
                 };
                 localStorage.setItem("user", JSON.stringify(userObj));
-                setToken(res?.data.token);
-                setUser(userObj);
+                setToken(res?.data.token!);
+                setUser(userObj!);
                 toast.success("Login Successful!");
                 navigate("/");
             }

@@ -6,7 +6,6 @@ const api : string = (process.env["REACT_APP_API_URL"] as string);
 
 export const loginApi =
     async (username: string, password : string) => {
-    console.log(api)
     try {
         const data = await axios.post<UserProfileToken>
             (api + "authenticate", {username, password});
