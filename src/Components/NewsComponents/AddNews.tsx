@@ -6,6 +6,7 @@ const AddNews = (props : Props) => {
     const [headline, setHeadline] = useState("");
     const [creationDate, setCreationDate] = useState("");
     const [url, setUrl] = useState("");
+    // Variable to co
 
     return(
         <div>
@@ -40,6 +41,9 @@ const AddNews = (props : Props) => {
                         />
                     </label></li>
                 </ul>
+            </div>
+            <div>
+
             </div>
         </div>
     )
