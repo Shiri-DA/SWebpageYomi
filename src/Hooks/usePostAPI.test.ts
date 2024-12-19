@@ -1,4 +1,4 @@
-import {News} from "../Models/News";
+import {NewsModel} from "../Models/NewsModel";
 import {usePostAPI} from "./usePostAPI";
 import { renderHook, act } from '@testing-library/react';
 import { waitFor } from '@testing-library/react';
@@ -13,7 +13,7 @@ describe("usePostAPI hook", () => {
     });
 
     it("should post data and return response", async () => {
-        const mockData: News = {
+        const mockData: NewsModel = {
             id: 1,
             headline: "Headline 1",
             creationDate: new Date(2024,2,4).toString(),
@@ -22,7 +22,7 @@ describe("usePostAPI hook", () => {
         }
         mock.onPost("https://api.example.com/data").reply(200, mockData);
 
-        const { result } = renderHook(() => usePostAPI<News>());
+        const { result } = renderHook(() => usePostAPI<NewsModel>());
 
         act(() => {
             result.current.postData("https://api.example.com/data",

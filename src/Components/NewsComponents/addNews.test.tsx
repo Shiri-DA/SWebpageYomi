@@ -1,35 +1,103 @@
-import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
-import '@testing-library/jest-dom';
-import AddNews from './AddNews';
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import AddNews from "./AddNews";
+import { usePostAPI } from "../../Hooks/usePostAPI";
+import { handleAxiosError } from "../../Helpers/ErrorHandler";
 
-describe('AddNews Component', () => {
-    test('renders AddNews component correctly', () => {
-        render(<AddNews />);
-        expect(screen.getByText('Add New News')).toBeInTheDocument();
-        expect(screen.getByLabelText('Headline')).toBeInTheDocument();
-        expect(screen.getByLabelText('Creation Date')).toBeInTheDocument();
-        expect(screen.getByLabelText('Url')).toBeInTheDocument();
+jest.mock("../../Hooks/usePostAPI");
+jest.mock("../../Helpers/ErrorHandler");
+
+describe("AddNews", () => {
+    beforeEach(() => {
+        (usePostAPI as jest.Mock).mockReturnValue({
+            data: null,
+            loading: false,
+            error: null,
+            postData: jest.fn(),
+        });
+
+        (console.log as jest.Mock) = jest.fn();
+        (handleAxiosError as jest.Mock).mockClear();
     });
 
-    test('updates headline state on input change', () => {
+    test("renders the component", () => {
         render(<AddNews />);
-        const headlineInput : HTMLInputElement = screen.getByLabelText('Headline');
-        fireEvent.change(headlineInput, { target: { value: 'New Headline' } });
-        expect(headlineInput.value).toBe('New Headline');
+        expect(screen.getByText("Add New News")).toBeInTheDocument();
     });
 
-    test('updates creationDate state on input change', () => {
+    test("displays an error if fields are empty", () => {
         render(<AddNews />);
-        const dateInput: HTMLInputElement = screen.getByLabelText('Creation Date');
-        fireEvent.change(dateInput, { target: { value: '2024-12-17' } });
-        expect(dateInput.value).toBe('2024-12-17');
+        fireEvent.click(screen.getByText("Create New News"));
+        expect(console.log).toHaveBeenCalledWith(new Error("All fields are required"));
     });
 
-    test('updates url state on input change', () => {
+    test("calls postData with correct data", async () => {
+        const postData = jest.fn();
+        (usePostAPI as jest.Mock).mockReturnValue({
+            data: null,
+            loading: false,
+            error: null,
+            postData,
+        });
+
         render(<AddNews />);
-        const urlInput : HTMLInputElement = screen.getByLabelText('Url');
-        fireEvent.change(urlInput, { target: { value: 'http://example.com' } });
-        expect(urlInput.value).toBe('http://example.com');
+        fireEvent.change(screen.getByLabelText("Headline"), { target: { value: "Test Headline" } });
+        fireEvent.change(screen.getByLabelText("Creation Date"), { target: { value: "2024-12-19" } });
+        fireEvent.change(screen.getByLabelText("Url"), { target: { value: "http://example.com" } });
+        fireEvent.click(screen.getByText("Create New News"));
+
+        await waitFor(() => {
+            expect(postData).toHaveBeenCalledWith(
+                `${process.env.REACT_APP_API_URL}${process.env.REACT_APP_API_POST_NEW_NEWS}`,
+                { headline: "Test Headline", creationDate: "2024-12-19", url: "http://example.com" }
+            );
+            expect(screen.getByLabelText("Headline")).toHaveValue("");
+            expect(screen.getByLabelText("Creation Date")).toHaveValue("");
+            expect(screen.getByLabelText("Url")).toHaveValue("");
+        });
+    });
+
+    test("handles API success response", async () => {
+        const postData = jest.fn();
+        (usePostAPI as jest.Mock).mockReturnValue({
+            data: { headline: "Test Headline" },
+            loading: false,
+            error: null,
+            postData,
+        });
+
+        const consoleSpy = jest.spyOn(console, "log").mockImplementation();
+
+        render(<AddNews />);
+        fireEvent.change(screen.getByLabelText("Headline"), { target: { value: "Test Headline" } });
+        fireEvent.change(screen.getByLabelText("Creation Date"), { target: { value: "2024-12-19" } });
+        fireEvent.change(screen.getByLabelText("Url"), { target: { value: "http://example.com" } });
+        fireEvent.click(screen.getByText("Create New News"));
+
+        await waitFor(() => {
+            expect(consoleSpy).toHaveBeenCalledWith({ headline: "Test Headline" });
+        });
+
+        consoleSpy.mockRestore();
+    });
+
+    test("handles API error response", async () => {
+        const postData = jest.fn();
+        const error = new Error("API Error");
+        (usePostAPI as jest.Mock).mockReturnValue({
+            data: null,
+            loading: false,
+            error,
+            postData,
+        });
+
+        render(<AddNews />);
+        fireEvent.change(screen.getByLabelText("Headline"), { target: { value: "Test Headline" } });
+        fireEvent.change(screen.getByLabelText("Creation Date"), { target: { value: "2024-12-19" } });
+        fireEvent.change(screen.getByLabelText("Url"), { target: { value: "http://example.com" } });
+        fireEvent.click(screen.getByText("Create New News"));
+
+        await waitFor(() => {
+            expect(handleAxiosError).toHaveBeenCalledWith(error);
+        });
     });
 });

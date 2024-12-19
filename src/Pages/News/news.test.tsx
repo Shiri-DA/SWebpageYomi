@@ -3,16 +3,16 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import News from "./News";
 
-// Mock the components used inside News
+// Mock the components used inside NewsModel
 // TODO: TDD activate each mock when creating the real componen
 jest.mock("../../Components/NewsComponents/AddNews.tsx", () => () => <div>Add New News</div>);
-// jest.mock("./EditComponent", () => () => <div>Edit News</div>);
-// jest.mock("./DeleteComponent", () => () => <div>Delete News</div>);
-//  jest.mock("./RetrieveComponent", () => () => <div>Retrieve News</div>);
+// jest.mock("./EditComponent", () => () => <div>Edit NewsModel</div>);
+// jest.mock("./DeleteComponent", () => () => <div>Delete NewsModel</div>);
+//  jest.mock("./RetrieveComponent", () => () => <div>Retrieve NewsModel</div>);
 
-describe("News Component", () => {
+describe("NewsModel Component", () => {
 
-    test("renders News component with buttons", () => {
+    test("renders NewsModel component with buttons", () => {
         const optionsList : string[] = ["Add", "Edit", "Delete", "Retrieve", "Retrieve"];
         render(<News />);
         expect(screen.getByText("NEWS")).toBeInTheDocument();
@@ -29,19 +29,19 @@ describe("News Component", () => {
 
     // TODO: activate each test when real component created
     // test("renders EditComponent when Edit button is clicked", () => {
-    //     render(<News />);
+    //     render(<NewsModel />);
     //     fireEvent.click(screen.getByText("Edit"));
-    //     expect(screen.getByText("Edit News")).toBeInTheDocument();
+    //     expect(screen.getByText("Edit NewsModel")).toBeInTheDocument();
     // });
 
     // test("renders DeleteComponent when Delete button is clicked", () => {
-    //     render(<News />);
+    //     render(<NewsModel />);
     //     fireEvent.click(screen.getByText("Delete"));
     //     expect(screen.getByText("Delete Component")).toBeInTheDocument();
     // });
 
     // test("renders RetrieveComponent when Retrieve button is clicked", () => {
-    //     render(<News />);
+    //     render(<NewsModel />);
     //     fireEvent.click(screen.getByText("Retrieve"));
     //     expect(screen.getByText("Retrieve Component")).toBeInTheDocument();
     // });

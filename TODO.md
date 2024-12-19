@@ -8,13 +8,14 @@
 </details>
 
 <details>
-<summary>News page</summary>
+<summary>NewsModel page</summary>
 
 * [ ] Add new news
   * [x] Create logic
-  * [ ] POST to API
+  * [x] POST to API
   * [ ] Check everything is correct
   * [ ] Handle server errors
+  * [ ] Popups with api call response
 * [ ] Modify news
   * [ ] Create all logic
   * [ ] PUT to API
