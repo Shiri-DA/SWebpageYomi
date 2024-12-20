@@ -1,7 +1,8 @@
 import {useEffect, useState} from "react";
 import {NewsModel} from "../../Models/NewsModel";
 import {usePostAPI} from "../../Hooks/usePostAPI";
-import {handleAxiosError} from "../../Helpers/ErrorHandler";
+import {handleAxiosError, handleGeneratedError} from "../../Helpers/ErrorHandler";
+import {toast} from "react-toastify";
 
 
 type Props = {};
@@ -19,8 +20,8 @@ const AddNews = (props : Props) => {
     const handleSubmit = () => {
         //  Check all inputs are filled
         if (headline === "" || creationDate === "" || url === "") {
-            // TODO: Popup (or other?) requiring input
-            console.log(new Error("All fields are required"));
+            // Shows error to user via Toastify
+            handleGeneratedError(new Error("All fields are required"));
             return;
         }
 
@@ -34,6 +35,7 @@ const AddNews = (props : Props) => {
         // Call the API with the custom hook
         postData(`${baseAPIUrl}${newNewsAPIUrl}`, newNews);
 
+        // Resets the variables
         setHeadline("");
         setCreationDate("");
         setUrl("");
@@ -41,9 +43,10 @@ const AddNews = (props : Props) => {
 
     // Handle success post
     useEffect(() => {
-        // TODO: Popup (or other?) with all the info of the new news
         if(data) {
-            console.log(data);
+            toast.success(`The news has been added successfully.\n 
+            This is the object created:\n 
+            ${data.id}, \n${data.headline}, \n${data.creationDate}, \n${data.url}`);
         }
     }, [data]);
 

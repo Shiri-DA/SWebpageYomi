@@ -1,10 +1,14 @@
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import AddNews from "./AddNews";
 import { usePostAPI } from "../../Hooks/usePostAPI";
-import { handleAxiosError } from "../../Helpers/ErrorHandler";
+import { handleAxiosError, handleGeneratedError } from "../../Helpers/ErrorHandler";
+import { toast } from "react-toastify";
+import {NewsModel} from "../../Models/NewsModel";
+import {data} from "react-router";
 
 jest.mock("../../Hooks/usePostAPI");
 jest.mock("../../Helpers/ErrorHandler");
+jest.mock("react-toastify");
 
 describe("AddNews", () => {
     beforeEach(() => {
@@ -15,8 +19,9 @@ describe("AddNews", () => {
             postData: jest.fn(),
         });
 
-        (console.log as jest.Mock) = jest.fn();
         (handleAxiosError as jest.Mock).mockClear();
+        (handleGeneratedError as jest.Mock).mockClear();
+        (toast.success as jest.Mock).mockClear();
     });
 
     test("renders the component", () => {
@@ -24,10 +29,12 @@ describe("AddNews", () => {
         expect(screen.getByText("Add New News")).toBeInTheDocument();
     });
 
-    test("displays an error if fields are empty", () => {
+    test("displays an error if fields are empty", async () => {
         render(<AddNews />);
         fireEvent.click(screen.getByText("Create New News"));
-        expect(console.log).toHaveBeenCalledWith(new Error("All fields are required"));
+        await waitFor(() => {
+            expect(handleGeneratedError).toHaveBeenCalledWith(new Error("All fields are required"));
+        });
     });
 
     test("calls postData with correct data", async () => {
@@ -58,14 +65,18 @@ describe("AddNews", () => {
 
     test("handles API success response", async () => {
         const postData = jest.fn();
+        const testData: NewsModel = {
+            id: 1,
+            headline: "Test Headline",
+            creationDate: "2024-12-19",
+            url: "http://example.com"
+        };
         (usePostAPI as jest.Mock).mockReturnValue({
-            data: { headline: "Test Headline" },
+            data: testData,
             loading: false,
             error: null,
             postData,
         });
-
-        const consoleSpy = jest.spyOn(console, "log").mockImplementation();
 
         render(<AddNews />);
         fireEvent.change(screen.getByLabelText("Headline"), { target: { value: "Test Headline" } });
@@ -74,10 +85,12 @@ describe("AddNews", () => {
         fireEvent.click(screen.getByText("Create New News"));
 
         await waitFor(() => {
-            expect(consoleSpy).toHaveBeenCalledWith({ headline: "Test Headline" });
+            expect(toast.success).toHaveBeenCalledWith(`The news has been added successfully.\n 
+            This is the object created:\n 
+            ${testData.id}, \n${testData.headline}, \n${testData.creationDate}, \n${testData.url}`);
         });
 
-        consoleSpy.mockRestore();
+
     });
 
     test("handles API error response", async () => {

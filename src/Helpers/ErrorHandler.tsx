@@ -22,3 +22,7 @@ export const handleAxiosError = (error: any) => {
         }
     }
 }
+
+export const handleGeneratedError = (error: Error) => {
+    toast.error(error.message);
+}
