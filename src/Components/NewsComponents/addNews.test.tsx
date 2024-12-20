@@ -4,7 +4,6 @@ import { usePostAPI } from "../../Hooks/usePostAPI";
 import { handleAxiosError, handleGeneratedError } from "../../Helpers/ErrorHandler";
 import { toast } from "react-toastify";
 import {NewsModel} from "../../Models/NewsModel";
-import {data} from "react-router";
 
 jest.mock("../../Hooks/usePostAPI");
 jest.mock("../../Helpers/ErrorHandler");
