@@ -1,11 +1,11 @@
 import React from "react";
 import AddNews from "../../Components/NewsComponents/AddNews";
+import DeleteNews from "../../Components/NewsComponents/DeleteNews";
 
 const optionsList: string[] = ["Add", "Edit", "Delete", "Retrieve"];
 
 // Define placeholder components for each action until created and imported
 const EditComponent = () => <div>Edit Component</div>;
-const DeleteComponent = () => <div>Delete Component</div>;
 const RetrieveComponent = () => <div>Retrieve Component</div>;
 
 const News = () => {
@@ -34,7 +34,7 @@ const News = () => {
             <div>
                 {activeComponent === "Add" && <AddNews />}
                 {activeComponent === "Edit" && <EditComponent />}
-                {activeComponent === "Delete" && <DeleteComponent />}
+                {activeComponent === "Delete" && <DeleteNews />}
                 {activeComponent === "Retrieve" && <RetrieveComponent />}
             </div>
         </div>

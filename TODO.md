@@ -22,9 +22,9 @@
   * [ ] Check everything is correct
   * [ ] Handle server errors
 * [ ] Delete news
-  * [ ] Delete by ID
+  * [x] Delete by ID
   * [ ] Search by URL and Delete by ID
-  * [ ] DELETE to API
+  * [x] DELETE to API
   * [ ] Check everything is correct
   * [ ] Handle server errors
 * [ ] Retrieve news
