@@ -29,7 +29,7 @@
   * [x] Handle server errors
 * [ ] Retrieve news
   * [ ] Create all logic
-  * [ ] GET to API
+  * [x] GET to API
   * [ ] Check everything is correct
   * [ ] Handle server errors
 
