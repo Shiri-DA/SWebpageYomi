@@ -1,7 +1,7 @@
 import { useDeleteAPI} from "../../Hooks/useDeleteAPI";
 import {fireEvent, render, screen, waitFor} from "@testing-library/react";
 import DeleteNews from "./DeleteNews";
-import { handleGeneratedError} from "../../Helpers/ErrorHandler";
+import {handleAxiosError, handleGeneratedError} from "../../Helpers/ErrorHandler";
 
 const baseAPIUrl = "https://api.example.com";
 const baseNewsAPIUrl = "/news";
@@ -81,6 +81,22 @@ describe("DeleteNewsComponent", () => {
 
         expect(screen.getByText("Deleting...")).toBeInTheDocument();
     });
+
+    test("handles API error response", async () => {
+        const error = new Error("API Error");
+        (useDeleteAPI as jest.Mock).mockReturnValue({
+           status: null,
+           loading: false,
+           error,
+           deleteData: jest.fn()
+        });
+
+        render(<DeleteNews />);
+        fireEvent.change(screen.getByLabelText("News ID"));
+        fireEvent.click(screen.getByText("Delete the News"));
+
+        await waitFor(() => {expect(handleAxiosError).toHaveBeenCalledWith(error)});
+    })
 })
 
 

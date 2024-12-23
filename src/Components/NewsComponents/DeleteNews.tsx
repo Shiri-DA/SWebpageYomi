@@ -1,5 +1,5 @@
 import {useEffect, useState} from "react";
-import {handleGeneratedError} from "../../Helpers/ErrorHandler";
+import {handleAxiosError, handleGeneratedError} from "../../Helpers/ErrorHandler";
 import {useDeleteAPI} from "../../Hooks/useDeleteAPI";
 import { toast} from "react-toastify";
 
@@ -19,7 +19,6 @@ const DeleteNews = (props: Props) => {
             handleGeneratedError(new Error(`The news ID cannot be empty.`));
             return;
         }
-        console.log(`${baseAPIUrl}${newNewsAPIUrl}`);
 
         // API call with custom hook
         deleteData(`${baseAPIUrl}${newNewsAPIUrl}${deleteNewsAPIUrl}`, newsId)
@@ -34,6 +33,12 @@ const DeleteNews = (props: Props) => {
             toast.success("Successfully deleted news!");
         }
     }, [status]);
+
+    useEffect(() => {
+        if(error) {
+            handleAxiosError(error)
+        }
+    }, [error])
 
     return(
         <div>

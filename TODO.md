@@ -26,7 +26,7 @@
   * [ ] Search by URL and Delete by ID
   * [x] DELETE to API
   * [ ] Check everything is correct
-  * [ ] Handle server errors
+  * [x] Handle server errors
 * [ ] Retrieve news
   * [ ] Create all logic
   * [ ] GET to API
