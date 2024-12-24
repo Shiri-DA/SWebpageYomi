@@ -26,7 +26,7 @@ describe("RetrieveNews Component", () => {
     });
 
     test("should render the component", () => {
-        render(<RetrieveNews />);
+        render(<RetrieveNews  onRetrieve={jest.fn()} switchToDelete={jest.fn()}/>);
         expect(screen.getByText(/retrieve news/i)).toBeInTheDocument();
         expect(screen.getByText(/url/i)).toBeInTheDocument();
         expect(screen.getByText(/get news/i)).toBeInTheDocument();
@@ -48,7 +48,7 @@ describe("RetrieveNews Component", () => {
             getData: mockGetData
         });
 
-        render(<RetrieveNews />);
+        render(<RetrieveNews onRetrieve={jest.fn()} switchToDelete={jest.fn()}/>);
         fireEvent.change(screen.getByLabelText(/url/i), { target: {value: "url1"}});
         fireEvent.click(screen.getByText(/get news/i));
 
@@ -61,15 +61,16 @@ describe("RetrieveNews Component", () => {
         await waitFor(() => {expect(mockGetData).toBeCalledTimes(1)});
         await waitFor(() => {expect(screen.getByLabelText(/url/i)).toHaveValue("")});
         expect(screen.getByText('Searched news')).toBeInTheDocument();
-        expect(screen.getByText(`Retrieved News ID: ${mockNews.id}`)).toBeInTheDocument();
-        expect(screen.getByText(`Retrieved News URL: ${mockNews.url}`)).toBeInTheDocument();
-        expect(screen.getByText(`Retrieved News Date: ${mockNews.headline}`)).toBeInTheDocument();
-        expect(screen.getByText(`Retrieved News URL: ${String(mockNews.reviewed)}`)).toBeInTheDocument();
+        expect(screen.getByText(/Retrieved News ID: 1/i)).toBeInTheDocument();
+        expect(screen.getByText(/Retrieved News URL: url1/i)).toBeInTheDocument();
+        expect(screen.getByText(/Retrieved News Date: headline1/i)).toBeInTheDocument();
+        expect(screen.getByText(/Retrieved News Reviewed: false/i)).toBeInTheDocument();
+        expect(screen.getByText(/go to delete/i)).toBeInTheDocument();
     });
 
     test("should display an error if field are empty", async () => {
         const mockError = new Error("URL param cannot be null");
-        render(<RetrieveNews />);
+        render(<RetrieveNews onRetrieve={jest.fn()} switchToDelete={jest.fn()}/>);
         fireEvent.change(screen.getByLabelText(/url/i), { target: {value: "   "}});
         fireEvent.click(screen.getByText(/get news/i));
         await waitFor(() => {
@@ -87,13 +88,40 @@ describe("RetrieveNews Component", () => {
             getData
         });
 
-        render(<RetrieveNews />);
+        render(<RetrieveNews onRetrieve={jest.fn()} switchToDelete={jest.fn()}/>);
         fireEvent.change(screen.getByLabelText(/url/i), {target: {value:"url1"}});
         fireEvent.click(screen.getByText(/get news/i));
 
         await waitFor(() => {
             expect(handleAxiosError).toHaveBeenCalledWith(error);
         })
+    });
+
+    test("should call switchToDelete when 'Go to Delete' is clicked", async () => {
+        const mockSwitchToDelete = jest.fn();
+        const mockNews: NewsModel = {
+            id: 1,
+            headline: "headline1",
+            url: "url1",
+            creationDate: "2024-12-19",
+            reviewed: false,
+        };
+        (useGetAPIByParams as jest.Mock).mockReturnValue({
+            data: mockNews,
+            loading: false,
+            error: null,
+            getData: jest.fn(),
+        });
+
+        render(<RetrieveNews onRetrieve={jest.fn()} switchToDelete={mockSwitchToDelete} />);
+        fireEvent.change(screen.getByLabelText(/url/i), { target: { value: "url1" } });
+        fireEvent.click(screen.getByText(/get news/i));
+
+        await waitFor(() => {
+            expect(screen.getByText("Searched news")).toBeInTheDocument();
+        });
+        fireEvent.click(screen.getByText(/go to delete/i));
+        expect(mockSwitchToDelete).toHaveBeenCalledTimes(1);
     });
 
 })

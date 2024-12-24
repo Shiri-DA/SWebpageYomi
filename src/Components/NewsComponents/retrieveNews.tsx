@@ -1,10 +1,14 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useGetAPIByParams} from "../../Hooks/useGetAPI";
 import {handleAxiosError, handleGeneratedError} from "../../Helpers/ErrorHandler";
 import {NewsModel} from "../../Models/NewsModel";
 
+type Props = {
+    onRetrieve: (data:NewsModel) => void;
+    switchToDelete: () => void;
+}
 
-const RetrieveNews = () => {
+const RetrieveNews: React.FC<Props> = ({onRetrieve, switchToDelete}) => {
     const [url, setUrl] = useState<string>("");
     // Hook to manage API call
     const {data, error, loading, getData} = useGetAPIByParams<NewsModel>();
@@ -32,6 +36,12 @@ const RetrieveNews = () => {
         }
     }, [error]);
 
+    // Pass the data to parent
+    useEffect(() => {
+        if(data) {
+            onRetrieve(data);
+        }
+    }, [data, onRetrieve]);
 
     return(
         <div>
@@ -58,7 +68,10 @@ const RetrieveNews = () => {
                         <p>Retrieved News ID: {data.id}</p>
                         <p>Retrieved News URL: {data.url}</p>
                         <p>Retrieved News Date: {data.headline}</p>
-                        <p>Retrieved News URL: {String(data.reviewed)}</p>
+                        <p>Retrieved News Reviewed: {String(data.reviewed)}</p>
+                        <div>
+                            <button onClick={switchToDelete}>Go to Delete</button>
+                        </div>
                     </div>
                 ) : (
                     <p>No data</p>

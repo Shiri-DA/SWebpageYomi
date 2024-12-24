@@ -2,11 +2,14 @@ import {useEffect, useState} from "react";
 import {handleAxiosError, handleGeneratedError} from "../../Helpers/ErrorHandler";
 import {useDeleteAPI} from "../../Hooks/useDeleteAPI";
 import { toast} from "react-toastify";
+import {NewsModel} from "../../Models/NewsModel";
 
-type Props = {}
+type Props = {
+    data: NewsModel | null
+}
 
 const DeleteNews = (props: Props) => {
-    const [newsId, setNewsId] = useState<number>(0);
+    const [newsId, setNewsId] = useState<number>(props.data?.id ? props.data.id : 0);
     // Hook to manage de API call
     const {status, loading, error, deleteData} = useDeleteAPI();
     const baseAPIUrl : string = process.env.REACT_APP_API_URL as string;
